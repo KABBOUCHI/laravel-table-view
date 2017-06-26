@@ -1,6 +1,6 @@
 {
   "name": "kabbouchi/laravel-table-view",
-  "description": "",
+  "description": "Laravel 5 Package for easily displaying table views for Eloquent Collections.",
   "keywords": ["laravel", "table","view","table-view"],
   "license": "MIT",
   "authors": [
