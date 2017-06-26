@@ -38,7 +38,7 @@ php artisan vendor:publish --provider="KABBOUCHI\TableView\TableViewServiceProvi
     tableView($user)
            ->column('ID', 'id')
            ->column('Name', 'name')
-           ->column('Created At', function (ProductBrand $model) {
+           ->column('Created At', function ($model) {
                            return $model->created_at->diffForHumans();
             })
             ->render();
