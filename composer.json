@@ -1,0 +1,34 @@
+{
+  "name": "kabbouchi/laravel-table-view",
+  "description": "",
+  "keywords": ["laravel", "table","view","table-view"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Georges KABBOUCHI",
+      "email": "georges.kabbouchi@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "KABBOUCHI\\TableView\\": "src/"
+    },
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "require": {
+    "illuminate/support": "~5"
+  },
+   "extra": {
+      "laravel": {
+        "providers": [
+          "KABBOUCHI\\TableView\\TableViewServiceProvider"
+        ],
+        "aliases": {
+          "TableView": "KABBOUCHI\\TableView\\Facades\\TableView"
+        }
+      }
+  }
+
+}
