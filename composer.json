@@ -18,7 +18,7 @@
     ]
   },
   "require": {
-    "php": ">=7.0",
+    "php": ">=5.4",
     "illuminate/support": "~5"
   },
    "extra": {
@@ -30,6 +30,7 @@
           "TableView": "KABBOUCHI\\TableView\\Facades\\TableView"
         }
       }
-  }
+  },
+  "minimum-stability": "stable"
 
 }

@@ -18,7 +18,20 @@ class TableView
 
     public function render($id = null)
     {
-        $this->id = $id ?? 'table-' . str_random(6);
+        if (count($this->columns) == 0) {
+
+            if ($this->collection->count() > 0)
+            {
+                $array = $this->collection->first()->toArray();
+
+                foreach ($array as $key => $value) {
+
+                    $this->column(ucfirst($key), $key);
+                }
+            }
+
+        }
+        $this->id = $id != null ? $id : 'table-' . str_random(6);
 
         return new HtmlString(view('tableView::index', ['tableView' => $this])->render());
     }
