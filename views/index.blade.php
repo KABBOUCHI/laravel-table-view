@@ -30,22 +30,22 @@
 
 @if($tableView->dataTable)
 
-    @push(\Illuminate\Support\Facades\Config::get('tableView.css.stack_name'))
+    @push(\Illuminate\Support\Facades\Config::get('tableView.dataTable.css.stack_name'))
 
-        @foreach(\Illuminate\Support\Facades\Config::get('tableView.css.paths') as $path)
+        @foreach(\Illuminate\Support\Facades\Config::get('tableView.dataTable.css.paths') as $path)
             <link href="{{$path}}" rel="stylesheet">
         @endforeach
 
     @endpush
 
-    @push(\Illuminate\Support\Facades\Config::get('tableView.js.stack_name'))
-        @foreach(\Illuminate\Support\Facades\Config::get('tableView.js.paths') as $path)
+    @push(\Illuminate\Support\Facades\Config::get('tableView.dataTable.js.stack_name'))
+        @foreach(\Illuminate\Support\Facades\Config::get('tableView.dataTable.js.paths') as $path)
             <script src="{{$path}}"></script>
         @endforeach
 
         <script>
             $(function () {
-                ('#{{$tableView->id()}}').DataTable();
+                $('#{{$tableView->id()}}').DataTable();
             });
         </script>
 
