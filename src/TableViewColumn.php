@@ -11,7 +11,7 @@ class TableViewColumn
 
     private $customValue;
 
-    public function __construct($title, $value)
+    public function __construct($title, $value, $cast = null)
     {
         if (is_null($value)) {
             $value = $title;
@@ -20,6 +20,10 @@ class TableViewColumn
         $this->title = ($title === false) ? '' : $title;
 
         if (is_string($value)) {
+
+            if ($cast) {
+                settype($value, $cast);
+            }
             $this->propertyName = $value;
         } else {
             $this->customValue = $value;

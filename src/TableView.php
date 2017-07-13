@@ -51,9 +51,9 @@ class TableView
         return $this->columns;
     }
 
-    public function column($title, $value = null)
+    public function column($title, $value = null, $cast = null)
     {
-        $column = new TableViewColumn($title, $value);
+        $column = new TableViewColumn($title, $value,$cast);
 
         $this->columns[] = $column;
 
