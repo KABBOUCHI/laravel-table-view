@@ -19,13 +19,12 @@ class TableViewColumn
         }
         $this->title = ($title === false) ? '' : $title;
 
-        if (is_string($value)) {
-
+        if (is_string($value) && $cast == null) {
+            $this->propertyName = $value;
+        } else {
             if ($cast) {
                 settype($value, $cast);
             }
-            $this->propertyName = $value;
-        } else {
             $this->customValue = $value;
         }
     }
@@ -47,7 +46,16 @@ class TableViewColumn
         } else {
             $closure = $this->customValue;
 
-            return $closure($model);
+            return is_callable($closure) ? $closure($model) : self::getCastedValue($closure);
         }
+    }
+
+    /**
+     * @param mixed $value
+     * @return string
+     */
+    public static function getCastedValue($value)
+    {
+        return (is_bool($value) ? ($value ? 'True' : 'False') : $value);
     }
 }
