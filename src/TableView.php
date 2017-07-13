@@ -46,6 +46,14 @@ class TableView
         return $this;
     }
 
+    public function useDataTable()
+    {
+
+        $this->dataTable = true;
+
+        return $this;
+    }
+
     public function id()
     {
         return $this->id;
