@@ -18,6 +18,11 @@ class TableViewServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadViewsFrom(__DIR__ . '/../views', 'tableView');
+
+        $this->publishes([
+            __DIR__.'/../config/tableView.php' => config_path('tableView.php'),
+        ],'tableView');
+
         $this->publishes([
             __DIR__ . '/../views' => base_path('resources/views/vendor/tableView'),
         ],'tableView');

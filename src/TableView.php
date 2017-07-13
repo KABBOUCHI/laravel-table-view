@@ -6,6 +6,8 @@ use Illuminate\Support\HtmlString;
 
 class TableView
 {
+    public $dataTable = false;
+
     protected $id;
     protected $collection;
     protected $columns = [];
@@ -20,8 +22,7 @@ class TableView
     {
         if (count($this->columns) == 0) {
 
-            if ($this->collection->count() > 0)
-            {
+            if ($this->collection->count() > 0) {
                 $array = $this->collection->first()->toArray();
 
                 foreach ($array as $key => $value) {
@@ -34,6 +35,15 @@ class TableView
         $this->id = $id != null ? $id : 'table-' . str_random(6);
 
         return new HtmlString(view('tableView::index', ['tableView' => $this])->render());
+    }
+
+    public function column($title, $value = null, $cast = null)
+    {
+        $column = new TableViewColumn($title, $value, $cast);
+
+        $this->columns[] = $column;
+
+        return $this;
     }
 
     public function id()
@@ -49,15 +59,6 @@ class TableView
     public function columns()
     {
         return $this->columns;
-    }
-
-    public function column($title, $value = null, $cast = null)
-    {
-        $column = new TableViewColumn($title, $value,$cast);
-
-        $this->columns[] = $column;
-
-        return $this;
     }
 
     public function setTableClass($classes)
