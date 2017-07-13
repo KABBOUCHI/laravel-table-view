@@ -56,7 +56,8 @@ php artisan vendor:publish --provider="KABBOUCHI\TableView\TableViewServiceProvi
     ]);
     
     $table = tableView($user)
-             ->setTableClass('table table-striped');
+             ->setTableClass('table table-striped')
+             ->useDataTable();
     
     // view
      $table->render();
