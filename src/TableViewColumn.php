@@ -64,6 +64,9 @@ class TableViewColumn
 
         switch (strtolower($type)) {
             case 'boolean':
+
+                settype($value, 'boolean');
+
                 if (count($options) < 2) return is_bool($value) ? ($value ? 'True' : 'False') : $value;
 
                 return is_bool($value) ? ($value ? $options[1] : $options[0]) : $value;
