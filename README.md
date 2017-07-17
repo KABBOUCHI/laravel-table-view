@@ -57,7 +57,7 @@ php artisan vendor:publish --provider="KABBOUCHI\TableView\TableViewServiceProvi
     
     $table = tableView($user)
              ->setTableClass('table table-striped')
-             ->useDataTable();
+             ->useDataTable(); // You need to add @stack('scripts') and @stack('styles') in your main blade template
     
     // view
      $table->render();
