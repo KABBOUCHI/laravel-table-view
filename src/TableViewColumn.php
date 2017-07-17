@@ -46,7 +46,7 @@ class TableViewColumn
         } else {
             $closure = $this->customValue;
 
-            return is_callable($closure) ? $closure($model) : self::getCastedValue($closure);
+            return is_callable($closure) ? $closure($model) : self::getCastedValue($model->{$this->customValue});
         }
     }
 
@@ -73,7 +73,7 @@ class TableViewColumn
 
                 $class = count($options) >= 3 ? $options[2] : '';
 
-                return "<img src='' class='{$class}' width='{$options[0]}' height='{$options[1]}'>";
+                return "<img src='{$value}' class='{$class}' width='{$options[0]}' height='{$options[1]}'>";
         }
 
         return $value;
