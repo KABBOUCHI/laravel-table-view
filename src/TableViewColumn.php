@@ -11,6 +11,8 @@ class TableViewColumn
 
     private $customValue;
 
+    private $cast = null;
+
     public function __construct($title, $value, $cast = null)
     {
         if (is_null($value)) {
@@ -22,9 +24,7 @@ class TableViewColumn
         if (is_string($value) && $cast == null) {
             $this->propertyName = $value;
         } else {
-            if ($cast) {
-                settype($value, $cast);
-            }
+            $this->cast = $cast;
             $this->customValue = $value;
         }
     }
@@ -54,8 +54,28 @@ class TableViewColumn
      * @param mixed $value
      * @return string
      */
-    public static function getCastedValue($value)
+    public function getCastedValue($value)
     {
-        return (is_bool($value) ? ($value ? 'True' : 'False') : $value);
+        $array = explode('|', $this->cast);
+
+        $type = $array[0];
+
+        $options = count($array) <= 1 ? [] : explode(',', $array[1]);
+
+        switch (strtolower($type)) {
+            case 'boolean':
+                if (count($options) < 2) return is_bool($value) ? ($value ? 'True' : 'False') : $value;
+
+                return is_bool($value) ? ($value ? $options[1] : $options[0]) : $value;
+
+            case 'image':
+                if (count($options) < 2) return '<img src="' . $value . '">';
+
+                $class = count($options) >= 3 ? $options[2] : '';
+
+                return "<img src='' class='{$class}' width='{$options[0]}' height='{$options[1]}'>";
+        }
+
+        return $value;
     }
 }
