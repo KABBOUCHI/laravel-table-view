@@ -46,7 +46,8 @@
     <script>
         $(function () {
             $('#{{$tableView->id()}}').DataTable({
-                "bSort": false
+                "bSort": true,
+                "aaSorting": []
             });
         });
     </script>
