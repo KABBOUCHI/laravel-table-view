@@ -2,6 +2,7 @@
 
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\HtmlString;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -83,7 +84,8 @@ class TableView
     {
         if ($this->hasPagination())
         {
-            return $this->paginator;
+            $params = App::make("request")->query->all();
+            return $this->paginator->appends($params)->setPath('');
         }
 
         return $this->collection;
