@@ -49,6 +49,8 @@ php artisan vendor:publish --provider="KABBOUCHI\TableView\TableViewServiceProvi
 ```
 
 ```php
+    // tableView with client side pagination (dataTable)
+    
     // controller
     $users = collect([
        (object) ["id" => 1, "user" => "User 1"],
@@ -64,6 +66,27 @@ php artisan vendor:publish --provider="KABBOUCHI\TableView\TableViewServiceProvi
     
     // view
      $table->render();
+```
+
+```php
+
+    // tableView with server side pagination
+    
+    // controller
+    $users = User::all();
+   
+    $table = tableView($user)
+               ->column('ID', 'id')
+               ->column('Active', 'active','boolean')
+               ->column('Name', 'name')
+               ->column('Created At', function ($model) {
+                               return $model->created_at->diffForHumans();
+                })
+                ->appendsQueries(true) // or pass an Array for specific queries e.g: ['foo','bar']
+                ->paginate(); // default 15
+            
+    // view
+    $table->render();
 ```
 
 

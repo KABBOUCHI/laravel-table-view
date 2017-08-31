@@ -16,7 +16,7 @@ class TableView
     protected $columns = [];
     protected $classes = 'table';
     protected $paginator = null;
-
+    protected $appendsQueries = false;
     public function __construct(Collection $collection)
     {
         $this->collection = $collection;
@@ -80,11 +80,29 @@ class TableView
         return $this->id;
     }
 
+
+    public function appendsQueries($append = true )
+    {
+        $this->appendsQueries = $append;
+
+        return $this;
+    }
     public function data()
     {
         if ($this->hasPagination())
         {
-            $params = App::make("request")->query->all();
+            $params = [];
+            if ($this->appendsQueries)
+            {
+                if (is_array($this->appendsQueries))
+                {
+                    $params = App::make("request")->query->get($this->appendsQueries);
+                }else
+                {
+                    $params = App::make("request")->query->all();
+                }
+            }
+
             return $this->paginator->appends($params)->setPath('');
         }
 
