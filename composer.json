@@ -19,7 +19,8 @@
   },
   "require": {
     "php": ">=5.4",
-    "illuminate/support": "~5"
+    "illuminate/support": "~5",
+    "illuminate/pagination": "~5"
   },
    "extra": {
       "laravel": {

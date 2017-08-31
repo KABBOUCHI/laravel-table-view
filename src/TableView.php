@@ -3,6 +3,8 @@
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class TableView
 {
@@ -12,6 +14,7 @@ class TableView
     protected $collection;
     protected $columns = [];
     protected $classes = 'table';
+    protected $paginator = null;
 
     public function __construct(Collection $collection)
     {
@@ -54,6 +57,23 @@ class TableView
         return $this;
     }
 
+    public function paginate($perPage = 15, $page = null, $options = [])
+    {
+
+        $this->dataTable = false;
+
+
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $this->paginator = new LengthAwarePaginator($this->collection->forPage($page, $perPage),
+            $this->collection->count(), $perPage, $page, $options);
+
+
+        return $this;
+    }
+    public function hasPagination()
+    {
+        return !! $this->paginator;
+    }
     public function id()
     {
         return $this->id;
@@ -61,6 +81,11 @@ class TableView
 
     public function data()
     {
+        if ($this->hasPagination())
+        {
+            return $this->paginator;
+        }
+
         return $this->collection;
     }
 
