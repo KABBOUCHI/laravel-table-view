@@ -1,11 +1,12 @@
 <?php namespace KABBOUCHI\TableView;
 
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\HtmlString;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class TableView
 {
@@ -17,6 +18,8 @@ class TableView
     protected $classes = 'table';
     protected $paginator = null;
     protected $appendsQueries = false;
+    private $searchFields = [];
+
     public function __construct(Collection $collection)
     {
         $this->collection = $collection;
@@ -43,6 +46,15 @@ class TableView
 
     public function column($title, $value = null, $cast = null)
     {
+        if (is_string($value)) {
+            $attr = explode(':', $value);
+            $value = $attr[0];
+
+            if (isset($attr[1]) && str_contains($attr[1], "search")) {
+                $this->searchFields[] = $value;
+            }
+        }
+
         $column = new TableViewColumn($title, $value, $cast);
 
         $this->columns[] = $column;
@@ -63,42 +75,66 @@ class TableView
 
         $this->dataTable = false;
 
-
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+
+        $this->applySearchFilter();
+
         $this->paginator = new LengthAwarePaginator($this->collection->forPage($page, $perPage),
             $this->collection->count(), $perPage, $page, $options);
 
 
         return $this;
     }
-    public function hasPagination()
+
+    private function applySearchFilter()
     {
-        return !! $this->paginator;
+
+        if (count($this->searchableFields()) && !empty($this->searchQuery())) {
+
+            $this->collection = $this->collection->filter(function ($data) {
+
+                foreach ($this->searchableFields() as $field) {
+
+                    if (str_contains($data->{$field}, $this->searchQuery())) {
+                        return true;
+                    }
+                }
+
+                return false;
+            });
+        }
     }
+
+    public function searchableFields()
+    {
+        return $this->searchFields;
+    }
+
+    public function searchQuery()
+    {
+        return Request::get('q');
+    }
+
     public function id()
     {
         return $this->id;
     }
 
-
-    public function appendsQueries($append = true )
+    public function appendsQueries($append = true)
     {
         $this->appendsQueries = $append;
 
         return $this;
     }
+
     public function data()
     {
-        if ($this->hasPagination())
-        {
+        if ($this->hasPagination()) {
             $params = [];
-            if ($this->appendsQueries)
-            {
-                if (is_array($this->appendsQueries))
-                {
+            if ($this->appendsQueries) {
+                if (is_array($this->appendsQueries)) {
                     $params = App::make("request")->query->get($this->appendsQueries);
-                }else
-                {
+                } else {
                     $params = App::make("request")->query->all();
                 }
             }
@@ -106,7 +142,15 @@ class TableView
             return $this->paginator->appends($params)->setPath('');
         }
 
+        if (!$this->dataTable)
+            $this->applySearchFilter();
+
         return $this->collection;
+    }
+
+    public function hasPagination()
+    {
+        return !!$this->paginator;
     }
 
     public function columns()

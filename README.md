@@ -78,7 +78,7 @@ php artisan vendor:publish --provider="KABBOUCHI\TableView\TableViewServiceProvi
     $table = tableView($user)
                ->column('ID', 'id')
                ->column('Active', 'active','boolean')
-               ->column('Name', 'name')
+               ->column('Name', 'name:search') // enable search for names
                ->column('Created At', function ($model) {
                                return $model->created_at->diffForHumans();
                 })
