@@ -1,6 +1,6 @@
 <div class="tableView-wrapper">
 
-    @if(count($this->searchableFields()))
+    @if(count($tableView->searchableFields()))
 
         <form name="searchForm" class="pull-right" method="GET">
 
