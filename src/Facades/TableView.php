@@ -1,4 +1,5 @@
 <?php
+
 namespace KABBOUCHI\TableView\Facades;
 
 use Illuminate\Support\Facades\Facade;

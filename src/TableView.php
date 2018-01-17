@@ -1,12 +1,13 @@
-<?php namespace KABBOUCHI\TableView;
+<?php
 
+namespace KABBOUCHI\TableView;
 
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\App;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class TableView
 {
@@ -28,18 +29,15 @@ class TableView
     public function render($id = null)
     {
         if (count($this->columns) == 0) {
-
             if ($this->collection->count() > 0) {
                 $array = $this->collection->first()->toArray();
 
                 foreach ($array as $key => $value) {
-
                     $this->column(ucfirst($key), $key);
                 }
             }
-
         }
-        $this->id = $id != null ? $id : 'table-' . str_random(6);
+        $this->id = $id != null ? $id : 'table-'.str_random(6);
 
         return new HtmlString(view('tableView::index', ['tableView' => $this])->render());
     }
@@ -50,7 +48,7 @@ class TableView
             $attr = explode(':', $value);
             $value = $attr[0];
 
-            if (isset($attr[1]) && str_contains($attr[1], "search")) {
+            if (isset($attr[1]) && str_contains($attr[1], 'search')) {
                 $this->searchFields[] = $value;
             }
         }
@@ -64,7 +62,6 @@ class TableView
 
     public function useDataTable()
     {
-
         $this->dataTable = true;
 
         return $this;
@@ -72,7 +69,6 @@ class TableView
 
     public function paginate($perPage = 15, $page = null, $options = [])
     {
-
         $this->dataTable = false;
 
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
@@ -82,19 +78,14 @@ class TableView
         $this->paginator = new LengthAwarePaginator($this->collection->forPage($page, $perPage),
             $this->collection->count(), $perPage, $page, $options);
 
-
         return $this;
     }
 
     private function applySearchFilter()
     {
-
-        if (count($this->searchableFields()) && !empty($this->searchQuery())) {
-
+        if (count($this->searchableFields()) && ! empty($this->searchQuery())) {
             $this->collection = $this->collection->filter(function ($data) {
-
                 foreach ($this->searchableFields() as $field) {
-
                     if (str_contains($data->{$field}, $this->searchQuery())) {
                         return true;
                     }
@@ -133,24 +124,25 @@ class TableView
             $params = [];
             if ($this->appendsQueries) {
                 if (is_array($this->appendsQueries)) {
-                    $params = App::make("request")->query->get($this->appendsQueries);
+                    $params = App::make('request')->query->get($this->appendsQueries);
                 } else {
-                    $params = App::make("request")->query->all();
+                    $params = App::make('request')->query->all();
                 }
             }
 
             return $this->paginator->appends($params)->setPath('');
         }
 
-        if (!$this->dataTable)
+        if (! $this->dataTable) {
             $this->applySearchFilter();
+        }
 
         return $this->collection;
     }
 
     public function hasPagination()
     {
-        return !!$this->paginator;
+        return (bool) $this->paginator;
     }
 
     public function columns()

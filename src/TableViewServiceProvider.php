@@ -1,7 +1,9 @@
 <?php
+
 namespace KABBOUCHI\TableView;
 
 use Illuminate\Support\ServiceProvider;
+
 class TableViewServiceProvider extends ServiceProvider
 {
     /**
@@ -10,6 +12,7 @@ class TableViewServiceProvider extends ServiceProvider
      * @var bool
      */
     protected $defer = false;
+
     /**
      * Bootstrap the application events.
      *
@@ -17,16 +20,17 @@ class TableViewServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadViewsFrom(__DIR__ . '/../views', 'tableView');
+        $this->loadViewsFrom(__DIR__.'/../views', 'tableView');
 
         $this->publishes([
             __DIR__.'/../config/tableView.php' => config_path('tableView.php'),
-        ],'tableView');
+        ], 'tableView');
 
         $this->publishes([
-            __DIR__ . '/../views' => base_path('resources/views/vendor/tableView'),
-        ],'tableView');
+            __DIR__.'/../views' => base_path('resources/views/vendor/tableView'),
+        ], 'tableView');
     }
+
     /**
      * Register the service provider.
      *
@@ -34,6 +38,5 @@ class TableViewServiceProvider extends ServiceProvider
      */
     public function register()
     {
-       
     }
 }

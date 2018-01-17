@@ -2,7 +2,6 @@
 
 namespace KABBOUCHI\TableView;
 
-
 class TableViewColumn
 {
     protected $title;
@@ -41,7 +40,7 @@ class TableViewColumn
 
     public function rowValue($model)
     {
-        if (!isset($this->customValue)) {
+        if (! isset($this->customValue)) {
             return $model->{$this->propertyName};
         } else {
             $closure = $this->customValue;
@@ -67,12 +66,16 @@ class TableViewColumn
 
                 settype($value, 'boolean');
 
-                if (count($options) < 2) return is_bool($value) ? ($value ? 'True' : 'False') : $value;
+                if (count($options) < 2) {
+                    return is_bool($value) ? ($value ? 'True' : 'False') : $value;
+                }
 
                 return is_bool($value) ? ($value ? $options[1] : $options[0]) : $value;
 
             case 'image':
-                if (count($options) < 2) return '<img src="' . $value . '">';
+                if (count($options) < 2) {
+                    return '<img src="'.$value.'">';
+                }
 
                 $class = count($options) >= 3 ? $options[2] : '';
 
