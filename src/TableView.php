@@ -2,12 +2,12 @@
 
 namespace KABBOUCHI\TableView;
 
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\App;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class TableView
 {
@@ -37,7 +37,7 @@ class TableView
                 }
             }
         }
-        $this->id = $id != null ? $id : 'table-' . str_random(6);
+        $this->id = $id != null ? $id : 'table-'.str_random(6);
 
         return new HtmlString(view('tableView::index', ['tableView' => $this])->render());
     }
@@ -83,7 +83,7 @@ class TableView
 
     private function applySearchFilter()
     {
-        if (count($this->searchableFields()) && !empty($this->searchQuery())) {
+        if (count($this->searchableFields()) && ! empty($this->searchQuery())) {
             $this->collection = $this->collection->filter(function ($data) {
                 foreach ($this->searchableFields() as $field) {
                     if (str_contains($data->{$field}, $this->searchQuery())) {
@@ -133,7 +133,7 @@ class TableView
             return $this->paginator->appends($params)->setPath('');
         }
 
-        if (!$this->dataTable) {
+        if (! $this->dataTable) {
             $this->applySearchFilter();
         }
 
@@ -142,7 +142,7 @@ class TableView
 
     public function hasPagination()
     {
-        return (bool)$this->paginator;
+        return (bool) $this->paginator;
     }
 
     public function columns()
