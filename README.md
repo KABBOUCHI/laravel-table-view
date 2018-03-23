@@ -41,7 +41,7 @@ php artisan vendor:publish --provider="KABBOUCHI\TableView\TableViewServiceProvi
            ->column('Featured', 'active','boolean|No,Yes')
            ->column('Photo', 'photo','image')
            ->column('Avatar', 'avatar','image|200,200')
-           ->column('Name', 'name')
+           ->column('full_name') // ->column('Full name','full_name')
            ->column('Created At', function ($model) {
                            return $model->created_at->diffForHumans();
             })
