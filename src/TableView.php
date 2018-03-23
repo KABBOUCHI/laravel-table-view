@@ -44,8 +44,7 @@ class TableView
 
     public function column($title, $value = null, $cast = null)
     {
-        if ((is_string($title) && !$value)) {
-
+        if ((is_string($title) && ! $value)) {
             $attr = explode(':', $title);
             $value = $title;
             $title = str_replace('_', ' ', ucfirst($attr[0]));
