@@ -28,14 +28,14 @@ php artisan vendor:publish --provider="KABBOUCHI\TableView\TableViewServiceProvi
 ```php
     $users = User::all();
     
-    tableView($user)->render();
+    tableView($users)->render();
 
 ```
 
 ```php
     $users = User::all();
     
-    tableView($user)
+    tableView($users)
            ->column('ID', 'id')
            ->column('Active', 'active','boolean')
            ->column('Featured', 'active','boolean|No,Yes')
@@ -60,7 +60,7 @@ php artisan vendor:publish --provider="KABBOUCHI\TableView\TableViewServiceProvi
     
     ]);
     
-    $table = tableView($user)
+    $table = tableView($users)
              ->setTableClass('table table-striped')
              ->useDataTable(); // You need to add @stack('scripts') and @stack('styles') in your main blade template
     
@@ -75,9 +75,10 @@ php artisan vendor:publish --provider="KABBOUCHI\TableView\TableViewServiceProvi
     // controller
     $users = User::all();
    
-    $table = tableView($user)
+    $table = tableView($users)
                ->column('ID', 'id')
                ->column('Active', 'active','boolean')
+               ->column('Country', 'country.name') // $user->country->name
                ->column('Name', 'name:search') // enable search for names
                ->column('Created At', function ($model) {
                                return $model->created_at->diffForHumans();
