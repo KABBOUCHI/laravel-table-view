@@ -93,7 +93,7 @@ class TableView
         if (count($this->searchableFields()) && ! empty($this->searchQuery())) {
             $this->collection = $this->collection->filter(function ($data) {
                 foreach ($this->searchableFields() as $field) {
-                    if (str_contains($data->{$field}, $this->searchQuery())) {
+                    if (str_contains(strtolower($data->{$field}), strtolower($this->searchQuery()))) {
                         return true;
                     }
                 }
