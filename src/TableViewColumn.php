@@ -40,17 +40,16 @@ class TableViewColumn
 
     public function rowValue($model)
     {
-        if (!isset($this->customValue)) {
-
+        if (! isset($this->customValue)) {
             if (str_contains($this->propertyName, '.')) {
-
                 try {
                     $keys = explode('.', $this->propertyName);
 
                     $value = $model;
 
-                    foreach ($keys as $key)
+                    foreach ($keys as $key) {
                         $value = $value->{$key};
+                    }
 
                     return $value;
                 } catch (\Exception $exception) {
@@ -91,7 +90,7 @@ class TableViewColumn
 
             case 'image':
                 if (count($options) < 2) {
-                    return '<img src="' . $value . '">';
+                    return '<img src="'.$value.'">';
                 }
 
                 $class = count($options) >= 3 ? $options[2] : '';
