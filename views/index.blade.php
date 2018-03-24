@@ -60,16 +60,16 @@
 
 @if($tableView->dataTable)
 
-    @push(Config::get('tableView.dataTable.css.stack_name'))
+    @push(config('tableView.dataTable.css.stack_name'))
 
-        @foreach(Config::get('tableView.dataTable.css.paths') as $path)
+        @foreach(config('tableView.dataTable.css.paths',[]) as $path)
             <link href="{{$path}}" rel="stylesheet">
         @endforeach
 
     @endpush
 
-    @push(Config::get('tableView.dataTable.js.stack_name'))
-        @foreach(Config::get('tableView.dataTable.js.paths') as $path)
+    @push(config('tableView.dataTable.js.stack_name'))
+        @foreach(config('tableView.dataTable.js.paths',[]) as $path)
             <script src="{{$path}}"></script>
         @endforeach
 
