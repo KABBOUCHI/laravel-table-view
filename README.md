@@ -90,7 +90,24 @@ php artisan vendor:publish --provider="KABBOUCHI\TableView\TableViewServiceProvi
     $table->render();
 ```
 
+Specify custom attribute for each `tr`
+```php
+    $table = tableView(User::all())
+                ->setTableRowAttributes([
+                    'class' => 'tr-class'
+                ]);
+```
 
+Specify custom attribute for each `tr` using closure 
+```php
+    $table = tableView(Category::all()
+                ->setTableBodyClass('sortable')
+                ->setTableRowAttributes(function (Category $categ) {
+                    return [
+                        'data-order-id' => $categ->order_index
+                    ];
+                });
+```
 
 ## License
 

@@ -35,17 +35,19 @@
             @endforeach
         </tr>
         </thead>
-        <tbody>
+        <tbody class="{{ $tableView->geTableBodyClass() }}">
 
         @foreach($tableView->data() as $dataModel)
-            <tr>
-
+            <tr
+                    @foreach($tableView->getTableRowAttributes($dataModel) as $attribute => $value)
+                     {{$attribute}}='{{$value}}'
+                    @endforeach
+            >
                 @foreach($tableView->columns() as $column)
                     <td>
                         {!!  $column->rowValue($dataModel)  !!}
                     </td>
                 @endforeach
-
             </tr>
         @endforeach
         </tbody>
