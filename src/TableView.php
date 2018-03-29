@@ -2,6 +2,7 @@
 
 namespace KABBOUCHI\TableView;
 
+use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\App;
@@ -180,7 +181,7 @@ class TableView
 
         $closure = $this->tableRowAttributes;
 
-        return $closure($model);
+        return  $closure instanceof Closure ? $closure($model) : [];
     }
 
     public function setTableRowAttributes($data)
