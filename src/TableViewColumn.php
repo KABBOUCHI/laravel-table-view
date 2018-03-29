@@ -60,7 +60,7 @@ class TableViewColumn
             if (is_array($model->{$this->propertyName})) {
                 return implode(', ', $model->{$this->propertyName});
             }
-            
+
             return $model->{$this->propertyName};
         } else {
             $closure = $this->customValue;
