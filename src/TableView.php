@@ -3,6 +3,7 @@
 namespace KABBOUCHI\TableView;
 
 use Closure;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\App;
@@ -10,7 +11,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class TableView
+class TableView implements Htmlable
 {
     public $dataTable = false;
 
@@ -202,4 +203,14 @@ class TableView
     {
         return $this->tableBodyClass;
     }
+
+	/**
+	 * Get content as a string of HTML.
+	 *
+	 * @return string
+	 */
+	public function toHtml()
+	{
+		return $this->render();
+	}
 }
