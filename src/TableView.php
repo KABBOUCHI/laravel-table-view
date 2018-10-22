@@ -3,214 +3,242 @@
 namespace KABBOUCHI\TableView;
 
 use Closure;
-use Illuminate\Support\Collection;
-use Illuminate\Support\HtmlString;
-use Illuminate\Support\Facades\App;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\HtmlString;
 
 class TableView implements Htmlable
 {
-    public $dataTable = false;
+	public $dataTable = false;
 
-    protected $id;
-    protected $collection;
-    protected $columns = [];
-    protected $classes = 'table';
-    protected $paginator = null;
-    protected $appendsQueries = false;
-    protected $tableRowAttributes;
-    protected $tableBodyClass;
-    private $searchFields = [];
+	protected $id;
+	protected $collection;
+	protected $columns = [];
+	protected $classes = 'table';
+	protected $paginator = null;
+	protected $appendsQueries = false;
+	protected $tableRowAttributes;
+	protected $tableBodyClass;
+	protected $childDetailsCallback = null;
+	private $searchFields = [];
 
-    public function __construct(Collection $collection)
-    {
-        $this->collection = $collection;
-    }
+	public function __construct(Collection $collection)
+	{
+		$this->collection = $collection;
+	}
 
-    public function render($id = null)
-    {
-        if (count($this->columns) == 0) {
-            if ($this->collection->count() > 0) {
-                $array = $this->collection->first()->toArray();
+	public function childDetails($callback)
+	{
+		$this->childDetailsCallback = $callback;
 
-                foreach ($array as $key => $value) {
-                    $this->column(str_replace('_', ' ', ucfirst($key)), $key);
-                }
-            }
-        }
-        $this->id = $id != null ? $id : 'table-'.str_random(6);
+		return $this;
+	}
 
-        return new HtmlString(view('tableView::index', ['tableView' => $this])->render());
-    }
+	public function hasChildDetails()
+	{
+		return !!$this->childDetailsCallback;
+	}
 
-    public function column($title, $value = null, $cast = null)
-    {
-        if ((is_string($title) && ! $value)) {
-            $attr = explode(':', $title);
-            $attr = explode('.', $attr[0]);
+	public function getChildDetails($model)
+	{
+		$closure = $this->childDetailsCallback;
 
-            $value = $title;
-            $title = str_replace('_', ' ', ucfirst($attr[0]));
-        }
+		$html = $closure instanceof Closure ? $closure($model) : '';
 
-        if (is_string($value)) {
-            $attr = explode(':', $value);
-            $value = $attr[0];
+		if ($html instanceof View) {
+			$html = $html->render();
+		}
 
-            if (isset($attr[1]) && str_contains($attr[1], 'search')) {
-                $this->searchFields[] = $value;
-            }
-        }
+		return $html;
+	}
 
-        $column = new TableViewColumn($title, $value, $cast);
+	public function useDataTable()
+	{
+		$this->dataTable = true;
+		$this->paginator  = null;
 
-        $this->columns[] = $column;
+		return $this;
+	}
 
-        return $this;
-    }
+	public function paginate($perPage = 15, $page = null, $options = [])
+	{
+		$this->dataTable = false;
 
-    public function useDataTable()
-    {
-        $this->dataTable = true;
+		$page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
 
-        return $this;
-    }
+		$this->applySearchFilter();
 
-    public function paginate($perPage = 15, $page = null, $options = [])
-    {
-        $this->dataTable = false;
+		$this->paginator = new LengthAwarePaginator($this->collection->forPage($page, $perPage),
+			$this->collection->count(), $perPage, $page, $options);
 
-        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+		return $this;
+	}
 
-        $this->applySearchFilter();
+	private function applySearchFilter()
+	{
+		if (count($this->searchableFields()) && !empty($this->searchQuery())) {
+			$this->collection = $this->collection->filter(function ($data) {
+				foreach ($this->searchableFields() as $field) {
+					if (str_contains(strtolower($data->{$field}), strtolower($this->searchQuery()))) {
+						return true;
+					}
+				}
 
-        $this->paginator = new LengthAwarePaginator($this->collection->forPage($page, $perPage),
-            $this->collection->count(), $perPage, $page, $options);
+				return false;
+			});
+		}
+	}
 
-        return $this;
-    }
+	public function searchableFields()
+	{
+		return $this->searchFields;
+	}
 
-    private function applySearchFilter()
-    {
-        if (count($this->searchableFields()) && ! empty($this->searchQuery())) {
-            $this->collection = $this->collection->filter(function ($data) {
-                foreach ($this->searchableFields() as $field) {
-                    if (str_contains(strtolower($data->{$field}), strtolower($this->searchQuery()))) {
-                        return true;
-                    }
-                }
+	public function searchQuery()
+	{
+		return Request::get('q');
+	}
 
-                return false;
-            });
-        }
-    }
+	public function id()
+	{
+		return $this->id;
+	}
 
-    public function searchableFields()
-    {
-        return $this->searchFields;
-    }
+	public function appendsQueries($append = true)
+	{
+		$this->appendsQueries = $append;
 
-    public function searchQuery()
-    {
-        return Request::get('q');
-    }
+		return $this;
+	}
 
-    public function id()
-    {
-        return $this->id;
-    }
+	public function data()
+	{
+		if ($this->hasPagination()) {
+			$params = [];
+			if ($this->appendsQueries) {
+				if (is_array($this->appendsQueries)) {
+					$params = App::make('request')->query->get($this->appendsQueries);
+				} else {
+					$params = App::make('request')->query->all();
+				}
+			}
 
-    public function appendsQueries($append = true)
-    {
-        $this->appendsQueries = $append;
+			return $this->paginator->appends($params)->setPath('');
+		}
 
-        return $this;
-    }
+		if (!$this->dataTable) {
+			$this->applySearchFilter();
+		}
 
-    public function data()
-    {
-        if ($this->hasPagination()) {
-            $params = [];
-            if ($this->appendsQueries) {
-                if (is_array($this->appendsQueries)) {
-                    $params = App::make('request')->query->get($this->appendsQueries);
-                } else {
-                    $params = App::make('request')->query->all();
-                }
-            }
+		return $this->collection;
+	}
 
-            return $this->paginator->appends($params)->setPath('');
-        }
+	public function hasPagination()
+	{
+		return (bool)$this->paginator;
+	}
 
-        if (! $this->dataTable) {
-            $this->applySearchFilter();
-        }
+	public function columns()
+	{
+		return $this->columns;
+	}
 
-        return $this->collection;
-    }
+	public function setTableClass($classes)
+	{
+		$this->classes = $classes;
 
-    public function hasPagination()
-    {
-        return (bool) $this->paginator;
-    }
+		return $this;
+	}
 
-    public function columns()
-    {
-        return $this->columns;
-    }
+	public function getTableClass()
+	{
+		return $this->classes;
+	}
 
-    public function setTableClass($classes)
-    {
-        $this->classes = $classes;
+	public function getTableRowAttributes($model = null)
+	{
+		if (is_array($this->tableRowAttributes)) {
+			return $this->tableRowAttributes;
+		}
 
-        return $this;
-    }
+		$closure = $this->tableRowAttributes;
 
-    public function getTableClass()
-    {
-        return $this->classes;
-    }
+		return $closure instanceof Closure ? $closure($model) : [];
+	}
 
-    public function getTableRowAttributes($model = null)
-    {
-        if (is_array($this->tableRowAttributes)) {
-            return $this->tableRowAttributes;
-        }
+	public function setTableRowAttributes($data)
+	{
+		$this->tableRowAttributes = $data ?? [];
 
-        $closure = $this->tableRowAttributes;
+		return $this;
+	}
 
-        return  $closure instanceof Closure ? $closure($model) : [];
-    }
+	public function setTableBodyClass($class)
+	{
+		$this->tableBodyClass = $class;
 
-    public function setTableRowAttributes($data)
-    {
-        $this->tableRowAttributes = $data ?? [];
+		return $this;
+	}
 
-        return $this;
-    }
+	public function geTableBodyClass()
+	{
+		return $this->tableBodyClass;
+	}
 
-    public function setTableBodyClass($class)
-    {
-        $this->tableBodyClass = $class;
+	/**
+	 * Get content as a string of HTML.
+	 *
+	 * @return string
+	 */
+	public function toHtml()
+	{
+		return $this->render();
+	}
 
-        return $this;
-    }
+	public function render($id = null)
+	{
+		if (count($this->columns) == 0) {
+			if ($this->collection->count() > 0) {
+				$array = $this->collection->first()->toArray();
 
-    public function geTableBodyClass()
-    {
-        return $this->tableBodyClass;
-    }
+				foreach ($array as $key => $value) {
+					$this->column(str_replace('_', ' ', ucfirst($key)), $key);
+				}
+			}
+		}
+		$this->id = $id != null ? $id : 'table-' . str_random(6);
 
-    /**
-     * Get content as a string of HTML.
-     *
-     * @return string
-     */
-    public function toHtml()
-    {
-        return $this->render();
-    }
+		return new HtmlString(view('tableView::index', ['tableView' => $this])->render());
+	}
+
+	public function column($title, $value = null, $cast = null)
+	{
+		if ((is_string($title) && !$value)) {
+			$attr = explode(':', $title);
+			$attr = explode('.', $attr[0]);
+
+			$value = $title;
+			$title = str_replace('_', ' ', ucfirst($attr[0]));
+		}
+
+		if (is_string($value)) {
+			$attr = explode(':', $value);
+			$value = $attr[0];
+
+			if (isset($attr[1]) && str_contains($attr[1], 'search')) {
+				$this->searchFields[] = $value;
+			}
+		}
+
+		$column = new TableViewColumn($title, $value, $cast);
+
+		$this->columns[] = $column;
+
+		return $this;
+	}
 }

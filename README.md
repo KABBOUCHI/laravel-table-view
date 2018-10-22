@@ -81,8 +81,11 @@ php artisan vendor:publish --provider="KABBOUCHI\TableView\TableViewServiceProvi
                ->column('Country', 'country.name') // $user->country->name
                ->column('Name', 'name:search') // enable search for names
                ->column('Created At', function ($model) {
-                               return $model->created_at->diffForHumans();
+                 return $model->created_at->diffForHumans();
                 })
+               ->childDetails(function (User $user) {
+                 return view('partials.user-details',compact('user')); // return view or string
+                });
                 ->appendsQueries(true) // or pass an Array for specific queries e.g: ['foo','bar']
                 ->paginate(); // default 15
             

@@ -24,13 +24,16 @@
     <table class="{{$tableView->getTableClass()}}" id="{{$tableView->id()}}">
         <thead>
         <tr>
+            @if($tableView->hasChildDetails())
+                <th></th>
+            @endif
             @foreach($tableView->columns() as $column)
 
-                <td>
+                <th>
 
                     {{ $column->title() }}
 
-                </td>
+                </th>
 
             @endforeach
         </tr>
@@ -39,17 +42,46 @@
 
         @foreach($tableView->data() as $dataModel)
             <tr
-                    @foreach($tableView->getTableRowAttributes($dataModel) as $attribute => $value)
-                     {{$attribute}}='{{$value}}'
-                    @endforeach
+                    @if($tableView->hasChildDetails() && $tableView->dataTable)
+                    data-child-content="{{ $tableView->getChildDetails($dataModel) }}"
+            @endif
+            @foreach($tableView->getTableRowAttributes($dataModel) as $attribute => $value)
+                {{$attribute}}='{{$value}}'
+            @endforeach
             >
-                @foreach($tableView->columns() as $column)
-                    <td>
-                        {!!  $column->rowValue($dataModel)  !!}
-                    </td>
+            @if($tableView->hasChildDetails())
+                <td class="details-control">
+                    <svg style="cursor: pointer" width=14 height=14 aria-hidden="true" data-prefix="fas"
+                         data-icon="angle-down"
+                         class="svg-inline--fa fa-angle-down fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg"
+                         viewBox="0 0 320 512">
+                        <path fill="currentColor"
+                              d="M143 352.3L7 216.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.6c9.4-9.4 24.6-9.4 33.9 0l96.4 96.4 96.4-96.4c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-136 136c-9.2 9.4-24.4 9.4-33.8 0z"></path>
+                    </svg>
+                    <svg style="display: none; cursor: pointer" width=14 height=14 aria-hidden="true" data-prefix="fas"
+                         data-icon="angle-up"
+                         class="svg-inline--fa fa-angle-up fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg"
+                         viewBox="0 0 320 512">
+                        <path fill="currentColor"
+                              d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"></path>
+                    </svg>
+                </td>
+            @endif
+            @foreach($tableView->columns() as $column)
+                <td>
+                    {!!  $column->rowValue($dataModel)  !!}
+                </td>
                 @endforeach
-            </tr>
-        @endforeach
+                </tr>
+                @if($tableView->hasChildDetails() && ! $tableView->dataTable)
+                    <tr style="display: none">
+                        <td colspan="{{ count($tableView->columns()) + 1 }}">
+                            {!! $tableView->getChildDetails($dataModel) !!}
+                        </td>
+                    </tr>
+                @endif
+            @endforeach
+
         </tbody>
     </table>
 </div>
@@ -77,13 +109,59 @@
 
         <script>
             $(function () {
-                $('#{{$tableView->id()}}').DataTable({
+                var table = $('#{{$tableView->id()}}').DataTable({
                     "bSort": true,
                     "aaSorting": []
+                });
+                // Add event listener for opening and closing details
+                $(document).on('click', '.details-control', function () {
+                    var tr = $(this).closest('tr');
+                    var row = table.row(tr);
+
+                    if (row.child.isShown()) {
+                        // This row is already open - close it
+                        row.child.hide();
+                        tr.removeClass('shown');
+                        $(this).find('[data-icon="angle-down"]').show()
+                        $(this).find('[data-icon="angle-up"]').hide()
+
+                    } else {
+                        // Open this row
+                        row.child(tr.data('child-content')).show();
+                        tr.addClass('shown');
+                        $(this).find('[data-icon="angle-down"]').hide()
+                        $(this).find('[data-icon="angle-up"]').show()
+                    }
                 });
             });
         </script>
 
     @endpush
 
+@elseif($tableView->hasChildDetails())
+    @push(config('tableView.dataTable.js.stack_name'))
+        <script>
+            $(function () {
+                $(document).on('click', '.details-control', function (e) {
+                    e.preventDefault()
+                    var tr = $(this).closest('tr');
+                    tr.next().toggle();
+
+
+                    if (tr.next().is(':visible')) {
+                        $(this).find('[data-icon="angle-down"]').hide()
+                        $(this).find('[data-icon="angle-up"]').show()
+                    } else {
+                        $(this).find('[data-icon="angle-down"]').show()
+                        $(this).find('[data-icon="angle-up"]').hide()
+                    }
+
+
+                });
+            })
+
+
+        </script>
+
+    @endpush
 @endif
