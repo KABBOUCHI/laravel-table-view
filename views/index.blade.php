@@ -111,7 +111,11 @@
             $(function () {
                 var table = $('#{{$tableView->id()}}').DataTable({
                     "bSort": true,
-                    "aaSorting": []
+                    "aaSorting": [],
+                    "scrollX": true,
+                    "search" :{
+                        "search" : '{{ Request::get('q') }}'
+                    }
                 });
                 // Add event listener for opening and closing details
                 $(document).on('click', '.details-control', function () {
