@@ -93,14 +93,14 @@ class TableViewColumn
                 return is_bool($value) ? ($value ? $options[1] : $options[0]) : $value;
 
             case 'image':
-                
+
                 if (count($options) < 1) {
                     return '<img src="'.$value.'">';
                 }
 
-				if (count($options) < 2) {
-					return "<img src='{$value}' width='{$options[0]}'>";
-				}
+                if (count($options) < 2) {
+                    return "<img src='{$value}' width='{$options[0]}'>";
+                }
 
                 $class = count($options) >= 3 ? $options[2] : '';
 
