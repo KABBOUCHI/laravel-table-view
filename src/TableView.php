@@ -15,9 +15,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class TableView implements Htmlable
 {
-	use Macroable {
-		__call as macroCall;
-	}
+    use Macroable {
+        __call as macroCall;
+    }
 
     public $dataTable = false;
 
@@ -246,10 +246,11 @@ class TableView implements Htmlable
 
         return $this;
     }
-	public function __call($method, $parameters)
-	{
-		if (static::hasMacro($method)) {
-			return $this->macroCall($method, $parameters);
-		}
-	}
+
+    public function __call($method, $parameters)
+    {
+        if (static::hasMacro($method)) {
+            return $this->macroCall($method, $parameters);
+        }
+    }
 }
