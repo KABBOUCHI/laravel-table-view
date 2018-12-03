@@ -9,11 +9,16 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\App;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Traits\Macroable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class TableView implements Htmlable
 {
+	use Macroable {
+		__call as macroCall;
+	}
+
     public $dataTable = false;
 
     protected $id;
@@ -241,4 +246,10 @@ class TableView implements Htmlable
 
         return $this;
     }
+	public function __call($method, $parameters)
+	{
+		if (static::hasMacro($method)) {
+			return $this->macroCall($method, $parameters);
+		}
+	}
 }
