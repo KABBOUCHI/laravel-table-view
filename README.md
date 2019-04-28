@@ -26,7 +26,13 @@ php artisan vendor:publish --provider="KABBOUCHI\TableView\TableViewServiceProvi
 ## Usage
 
 ```php
+    // Collection
     $users = User::all();
+    
+    // or
+    
+    // Builder
+    $users = User::query(); //  User::where('active',true) ...
     
     tableView($users)->render();
 
