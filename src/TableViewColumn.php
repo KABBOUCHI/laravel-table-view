@@ -12,8 +12,12 @@ class TableViewColumn
 
     private $cast = null;
 
-    public function __construct($title, $value, $cast = null)
+    private $cssClasses = null;
+
+    public function __construct($title, $value, $cast = null, $cssClasses = null)
     {
+    	$this->cssClasses = $cssClasses;
+
         if (is_null($value)) {
             $value = $title;
             $title = '';
@@ -32,6 +36,11 @@ class TableViewColumn
     {
         return $this->title;
     }
+
+	public function cssClasses()
+	{
+		return $this->cssClasses;
+	}
 
     public function propertyName()
     {

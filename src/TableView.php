@@ -248,7 +248,7 @@ class TableView implements Htmlable
         return new HtmlString(view('tableView::index', ['tableView' => $this])->render());
     }
 
-    public function column($title, $value = null, $cast = null)
+    public function column($title, $value = null, $cast = null, $cssClasses = null)
     {
         if ((is_string($title) && ! $value)) {
             $attr = explode(':', $title);
@@ -267,7 +267,7 @@ class TableView implements Htmlable
             }
         }
 
-        $column = new TableViewColumn($title, $value, $cast);
+        $column = new TableViewColumn($title, $value, $cast, $cssClasses);
 
         $this->columns[] = $column;
 
