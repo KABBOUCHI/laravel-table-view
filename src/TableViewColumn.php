@@ -2,6 +2,8 @@
 
 namespace KABBOUCHI\TableView;
 
+use Illuminate\Support\Str;
+
 class TableViewColumn
 {
     protected $title;
@@ -50,7 +52,7 @@ class TableViewColumn
     public function rowValue($model)
     {
         if (! isset($this->customValue)) {
-            if (str_contains($this->propertyName, '.')) {
+            if (Str::contains($this->propertyName, '.')) {
                 try {
                     $keys = explode('.', $this->propertyName);
 
