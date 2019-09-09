@@ -3,6 +3,8 @@
 namespace KABBOUCHI\TableView;
 
 use Closure;
+
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Contracts\View\View;
@@ -112,7 +114,7 @@ class TableView implements Htmlable
         if (count($this->searchableFields()) && ! empty($this->searchQuery())) {
             $this->collection = $this->collection->filter(function ($data) {
                 foreach ($this->searchableFields() as $field) {
-                    if (str_contains(strtolower($data->{$field}), strtolower($this->searchQuery()))) {
+                    if (Str::contains(strtolower($data->{$field}), strtolower($this->searchQuery()))) {
                         return true;
                     }
                 }
@@ -243,7 +245,7 @@ class TableView implements Htmlable
                 }
             }
         }
-        $this->id = $id != null ? $id : 'table-'.str_random(6);
+        $this->id = $id != null ? $id : 'table-'.Str::random(6);
 
         return new HtmlString(view('tableView::index', ['tableView' => $this])->render());
     }
@@ -262,7 +264,7 @@ class TableView implements Htmlable
             $attr = explode(':', $value);
             $value = $attr[0];
 
-            if (isset($attr[1]) && str_contains($attr[1], 'search')) {
+            if (isset($attr[1]) && Str::contains($attr[1], 'search')) {
                 $this->searchFields[] = $value;
             }
         }
