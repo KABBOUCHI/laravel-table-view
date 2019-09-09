@@ -3,7 +3,6 @@
 namespace KABBOUCHI\TableView;
 
 use Closure;
-
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
