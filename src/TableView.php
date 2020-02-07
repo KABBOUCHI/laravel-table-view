@@ -99,7 +99,7 @@ class TableView implements Htmlable
                 $this->collection->count(),
                 $perPage, $page, $options);
         } else {
-            $this->paginator = $this->builder->paginate($perPage,['*'],'page',$page);
+            $this->paginator = $this->builder->paginate($perPage, ['*'], 'page', $page);
         }
 
         return $this;
