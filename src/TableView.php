@@ -135,7 +135,7 @@ class TableView implements Htmlable
         }
     }
 
-    public function SetSearchableFields($fields = [])
+    public function setSearchableFields($fields = [])
     {
         $this->searchFields = $fields;
 
