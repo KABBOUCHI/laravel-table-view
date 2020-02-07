@@ -3,17 +3,17 @@
 namespace KABBOUCHI\TableView;
 
 use Closure;
-use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
-use Illuminate\Support\HtmlString;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\App;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Macroable;
 
 class TableView implements Htmlable
 {
