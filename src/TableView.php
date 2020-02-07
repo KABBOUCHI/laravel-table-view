@@ -111,15 +111,27 @@ class TableView implements Htmlable
     private function applySearchFilter()
     {
         if (count($this->searchableFields()) && ! empty($this->searchQuery())) {
-            $this->collection = $this->collection->filter(function ($data) {
-                foreach ($this->searchableFields() as $field) {
-                    if (Str::contains(strtolower($data->{$field}), strtolower($this->searchQuery()))) {
-                        return true;
+            if ($this->collection) {
+                $this->collection = $this->collection->filter(function ($data) {
+                    foreach ($this->searchableFields() as $field) {
+                        if (Str::contains(strtolower($data->{$field}), strtolower($this->searchQuery()))) {
+                            return true;
+                        }
                     }
-                }
 
-                return false;
-            });
+                    return false;
+                });
+            }
+
+            if ($this->builder) {
+                $keyword = strtolower($this->searchQuery());
+
+                $this->builder->where(function ($query) use ($keyword) {
+                    foreach ($this->searchableFields() as $field) {
+                        $query->orWhere($field, 'LIKE', "%$keyword%");
+                    }
+                });
+            }
         }
     }
 
